@@ -1,0 +1,9 @@
+{
+  "apiKey": "mock-api-key",
+  "authDomain": "loco-instant.firebaseapp.com",
+  "projectId": "loco-instant",
+  "storageBucket": "loco-instant.appspot.com",
+  "messagingSenderId": "000000000000",
+  "appId": "1:000000000000:web:000000000000",
+  "firestoreDatabaseId": "(default)"
+}

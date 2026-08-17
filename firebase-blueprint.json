@@ -1,0 +1,105 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile in the Loco Instant marketplace, representing clients and service providers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "city": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "enum": ["client", "prestator", "admin"] },
+        "avatar": { "type": "string", "maxLength": 500 },
+        "isVerified": { "type": "boolean" },
+        "rating": { "type": "number" },
+        "completedJobs": { "type": "number" },
+        "points": { "type": "number" },
+        "streakDays": { "type": "number" },
+        "tier": { "type": "string", "enum": ["Bronze", "Silver", "Gold", "Platinum"] },
+        "referralCode": { "type": "string", "maxLength": 30 },
+        "referralsCount": { "type": "number" },
+        "referralEarnings": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "role"]
+    },
+    "QuoteRequest": {
+      "title": "QuoteRequest",
+      "description": "Client quote/service request submitted to local Cluj providers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "fullName": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "email": { "type": "string", "maxLength": 150 },
+        "city": { "type": "string", "maxLength": 100 },
+        "serviceSlug": { "type": "string", "maxLength": 100 },
+        "serviceName": { "type": "string", "maxLength": 150 },
+        "details": { "type": "string", "maxLength": 2000 },
+        "consent": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["noua", "in_lucru", "oferte_primite", "acceptata", "finalizata"] },
+        "userId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "fullName", "phone", "serviceSlug", "serviceName", "details", "status"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Service order with escrow transaction tracking.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "clientId": { "type": "string", "maxLength": 128 },
+        "providerId": { "type": "string", "maxLength": 128 },
+        "providerName": { "type": "string", "maxLength": 150 },
+        "providerRole": { "type": "string", "maxLength": 100 },
+        "serviceName": { "type": "string", "maxLength": 150 },
+        "amount": { "type": "number" },
+        "city": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["noua", "acceptata", "in_desfasurare", "finalizata", "anulata", "platita"] },
+        "escrowStatus": { "type": "string", "enum": ["in_espera", "securizat", "eliberat", "restituit"] },
+        "date": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "clientId", "providerName", "serviceName", "amount", "status", "escrowStatus"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Customer feedback and ratings for verified interventions.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "targetType": { "type": "string", "enum": ["provider", "user", "product"] },
+        "authorName": { "type": "string", "maxLength": 150 },
+        "authorId": { "type": "string", "maxLength": 128 },
+        "rating": { "type": "number" },
+        "comment": { "type": "string", "maxLength": 2000 },
+        "createdAt": { "type": "string" },
+        "isVerifiedEscrow": { "type": "boolean" }
+      },
+      "required": ["id", "targetId", "targetType", "authorName", "rating", "comment"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles for clients and service providers"
+    },
+    "/quoteRequests/{quoteId}": {
+      "schema": "QuoteRequest",
+      "description": "Client quote inquiries and emergency service requests"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Booked service jobs with escrow protection"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "Public reviews and ratings"
+    }
+  }
+}

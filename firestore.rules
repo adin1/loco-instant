@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow get: if isSignedIn() && (isOwner(userId) || resource.data.role == 'prestator');
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isOwner(userId) && isValidId(userId);
+      allow update: if isSignedIn() && isOwner(userId) && isValidId(userId);
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    // Quote Requests
+    match /quoteRequests/{quoteId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(quoteId);
+      allow update: if isSignedIn();
+      allow delete: if isSignedIn() && (resource.data.userId == request.auth.uid);
+    }
+
+    // Orders
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && (resource.data.clientId == request.auth.uid || resource.data.providerId == request.auth.uid);
+      allow list: if isSignedIn() && (resource.data.clientId == request.auth.uid || resource.data.providerId == request.auth.uid);
+      allow create: if isSignedIn() && isValidId(orderId);
+      allow update: if isSignedIn() && (resource.data.clientId == request.auth.uid || resource.data.providerId == request.auth.uid);
+      allow delete: if false;
+    }
+
+    // Reviews
+    match /reviews/{reviewId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && isValidId(reviewId) && incoming().rating >= 1 && incoming().rating <= 5;
+      allow update, delete: if isSignedIn() && (resource.data.authorId == request.auth.uid);
+    }
+  }
+}

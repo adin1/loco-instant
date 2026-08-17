@@ -1,0 +1,6 @@
+{
+  "name": "Loco Instant",
+  "description": "Marketplace local de servicii, meșteri verificați, plăți protejate Escrow, hartă live GPS și produse de casă.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
